@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: demo-app-virtual-service
+spec:
+  hosts:
+  - "demo-app.cloud"
+  gateways:
+  - demo-app-istio-gateway
+  http:
+  - match:
+    - uri:
+        exact: "/fortune"
+    route:
+      - destination:
+          host: demo-app
+          subset: v2
+  - match:
+    - uri:
+        prefix: "/v2/"
+    rewrite:
+      uri: "/"
+    route:
+      - destination:
+          host: demo-app
+          subset: v2
+  - match:
+    - uri:
+        prefix: "/v1/"
+    rewrite:
+      uri: "/"
+    route:
+      - destination:
+          host: demo-app
+          subset: v1
