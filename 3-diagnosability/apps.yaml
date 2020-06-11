@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: gateway
+  name: gateway
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: http
+      targetPort: 8080
+  selector:
+    app: gateway
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - image: dhananjay12/fungible-gateway:latest
+          env:
+            - name: EUREKA_CLIENT_ENABLED
+              value: "false"
+            - name: SPRING_CLOUD_KUBERNETES_ENABLED
+              value: "true"
+            - name: SPRING_CLOUD_KUBERNETES_RELOAD_ENABLED
+              value: "true"
+          imagePullPolicy: Always
+          name: gateway
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "756Mi"
+            limits:
+              memory: "1024Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: contact-us-service
+  name: contact-us-service
+spec:
+  type: NodePort
+  ports:
+    - port: 8081
+      name: http
+      targetPort: 8080
+  selector:
+    app: contact-us-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contact-us-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contact-us-service
+  template:
+    metadata:
+      labels:
+        app: contact-us-service
+    spec:
+      containers:
+        - image: dhananjay12/fungible-contact-us-service:latest
+          env:
+            - name: EUREKA_CLIENT_ENABLED
+              value: "false"
+            - name: SPRING_CLOUD_KUBERNETES_ENABLED
+              value: "true"
+            - name: SPRING_CLOUD_KUBERNETES_RELOAD_ENABLED
+              value: "true"
+          imagePullPolicy: Always
+          name: contact-us-service
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "756Mi"
+            limits:
+              memory: "1024Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: user-service
+  name: user-service
+spec:
+  type: NodePort
+  ports:
+    - port: 8082
+      name: http
+      targetPort: 8080
+  selector:
+    app: user-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - image: dhananjay12/fungible-user-service:latest
+          env:
+            - name: EUREKA_CLIENT_ENABLED
+              value: "false"
+            - name: SPRING_CLOUD_KUBERNETES_ENABLED
+              value: "true"
+            - name: SPRING_CLOUD_KUBERNETES_RELOAD_ENABLED
+              value: "true"
+          imagePullPolicy: Always
+          name: user-service
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "756Mi"
+            limits:
+              memory: "1024Mi"
